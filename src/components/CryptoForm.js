@@ -40,7 +40,7 @@ const cryptoOptionTemplate = (option) => {
 const CryptoForm = ({ onConvert }) => {
   const [sourceCrypto, setSourceCrypto] = useState('')
   const [cryptos, setCryptos] = useState([])
-  const [currencies, setCurrencies] = useState([])
+  const [currencies, setCurrencies] = useState([{key:'usd', name:"USD"}])
   const [targetCurrency, setTargetCurrency] = useState('usd')
   const [amount, setAmount] = useState(null)
   const [formErrors, setFormErrors] = useState({})
@@ -70,14 +70,11 @@ const CryptoForm = ({ onConvert }) => {
       .then((data) => {
         if (Array.isArray(data)) {
           setCurrencies(data)
-        } else {
-          console.error('Invalid data format:', data)
-          setCurrencies([])
         }
       })
       .catch((error) => {
         console.error('Error fetching currencies:', error)
-        setCurrencies([])
+        
       })
   }, [])
 

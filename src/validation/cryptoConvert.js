@@ -6,5 +6,5 @@ export const validationSchema = yup.object({
     .number()
     .required('Amount is required')
     .positive('Amount must be positive'),
-  targetCurrency: yup.string().required('Target Currency is required'),
+    targetCurrency: yup.string().required('Target Currency is required'),
 })

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8000/api/crypto', // Base URL for your backend API
+  baseURL: process.env.REACT_APP_API_BASE_URL,
 })
 
 instance.interceptors.response.use(
