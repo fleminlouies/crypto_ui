@@ -4,6 +4,7 @@ import { Button } from 'primereact/button'
 import { InputNumber } from 'primereact/inputnumber'
 import * as cryptoApi from '../api/cryptoApi'
 import { validationSchema } from '../validation/cryptoConvert'
+import { ProgressSpinner } from 'primereact/progressspinner'
 
 const selectedCryptoTemplate = (option, props) => {
   if (option) {
@@ -40,14 +41,16 @@ const cryptoOptionTemplate = (option) => {
 const CryptoForm = ({ onConvert }) => {
   const [sourceCrypto, setSourceCrypto] = useState('')
   const [cryptos, setCryptos] = useState([])
-  const [currencies, setCurrencies] = useState([{key:'usd', name:"USD"}])
+  const [currencies, setCurrencies] = useState([{ key: 'usd', name: 'USD' }])
   const [targetCurrency, setTargetCurrency] = useState('usd')
   const [amount, setAmount] = useState(null)
   const [formErrors, setFormErrors] = useState({})
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
+  const initialLoad = async () => {
     // Fetch the list of cryptocurrencies
-    cryptoApi
+    setLoading(true)
+    await cryptoApi
       .getCryptos()
       .then((data) => {
         if (Array.isArray(data)) {
@@ -61,11 +64,8 @@ const CryptoForm = ({ onConvert }) => {
         console.error('Error fetching cryptocurrencies:', error)
         setCryptos([])
       })
-  }, [])
 
-  useEffect(() => {
-    // Fetch the list of currencies
-    cryptoApi
+    await cryptoApi
       .getCurrencies()
       .then((data) => {
         if (Array.isArray(data)) {
@@ -74,23 +74,30 @@ const CryptoForm = ({ onConvert }) => {
       })
       .catch((error) => {
         console.error('Error fetching currencies:', error)
-        
       })
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    initialLoad()
   }, [])
 
-  const convert = () => {
+  const convert = async () => {
+    setLoading(true)
     const requestData = {
       sourceCrypto,
       amount,
       targetCurrency,
     }
 
-    cryptoApi
+    await cryptoApi
       .convertCurrency(requestData)
       .then((data) => {
         onConvert(data) // Pass the result back to the parent component
       })
       .catch((error) => console.error('Error:', error))
+
+    setLoading(false)
   }
 
   const handleFieldChange = (fieldName, value) => {
@@ -132,7 +139,19 @@ const CryptoForm = ({ onConvert }) => {
 
   return (
     <div className="bg-blue-900 rounded-2xl w-full shadow-md p-8 min-h-[300px] text-white">
-      <h1 className="tracking-wide font-bold uppercase text-4xl mb-6">Crypto Convert</h1>
+      <div className="flex ">
+        <h1 className="tracking-wide font-bold uppercase text-4xl mb-6">
+          Crypto Convert{' '}
+        </h1>
+        {loading && (
+          <ProgressSpinner
+            style={{ width: '50px', height: '50px' }}
+            strokeWidth="8"
+            fill="var(--surface-ground)"
+            animationDuration=".5s"
+          />
+        )}
+      </div>
       <div className="grid gap-5 text-sm">
         <div className="flex flex-col">
           <label htmlFor="sourceCrypto" className="tracking-wide pb-2">

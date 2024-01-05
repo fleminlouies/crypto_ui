@@ -10,14 +10,10 @@ const Home = () => {
     setResult(data)
   }
 
-
-
   return (
     <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-4 max-w-screen-xl m-auto">
       <CryptoForm onConvert={handleConvert} className=" shadow-md rounded-md" />
-      {result ? <Result result={result}/> : <Resume/>}
-      <div>{result && result.convertedAmount}</div>
-      
+      {result ? <Result result={result} /> : <Resume />}
     </div>
   )
 }
